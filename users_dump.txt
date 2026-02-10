@@ -1,0 +1,11 @@
+ID: 1 | Username: admin | Role: admin
+ID: 2 | Username: patient | Role: patient
+ID: 3 | Username: worker | Role: migrant_worker
+ID: 4 | Username: nurse | Role: home_nurse
+ID: 5 | Username: caregiver | Role: caregiver
+ID: 6 | Username: patient102 | Role: patient
+ID: 7 | Username: patient103 | Role: patient
+ID: 8 | Username: caregiver2 | Role: caregiver
+ID: 9 | Username: caregiver3 | Role: caregiver
+ID: 10 | Username: worker2 | Role: migrant_worker
+ID: 11 | Username: worker3 | Role: migrant_worker

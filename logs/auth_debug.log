@@ -1,0 +1,102 @@
+[2026-02-08 16:04:05] Login successful for: admin
+[2026-02-08 16:04:31] Login successful for: admin
+[2026-02-08 16:08:22] Login successful for: admin
+[2026-02-08 16:21:35] Login successful for: patient
+[2026-02-08 16:22:07] Login successful for: worker
+[2026-02-08 16:23:03] Login successful for: admin
+[2026-02-08 16:46:02] Login failed for: patient102 (Password mismatch)
+[2026-02-08 16:46:25] Login failed for: patient102 (Password mismatch)
+[2026-02-08 16:46:50] Login failed for: patient102 (Password mismatch)
+[2026-02-08 16:46:53] Login failed for: patient102 (Password mismatch)
+[2026-02-08 16:47:20] Login failed for: patient103 (Password mismatch)
+[2026-02-08 16:47:31] Login successful for: nurse
+[2026-02-08 16:47:31] Home access: user=nurse, role=home_nurse
+[2026-02-08 16:48:05] Login successful for: caregiver
+[2026-02-08 16:48:05] Home access: user=caregiver, role=caregiver
+[2026-02-08 16:48:06] Login successful for: caregiver
+[2026-02-08 16:48:06] Home access: user=caregiver, role=caregiver
+[2026-02-08 16:48:28] Login successful for: worker
+[2026-02-08 16:48:28] Home access: user=worker, role=migrant_worker
+[2026-02-08 23:21:06] Login successful for: worker
+[2026-02-08 23:21:06] Home access: user=worker, role=migrant_worker
+[2026-02-08 23:21:16] Login failed for: adminq (User not found)
+[2026-02-08 23:21:26] Login successful for: admin
+[2026-02-08 23:21:26] Home access: user=admin, role=admin
+[2026-02-08 23:21:37] Login failed for: admin (Password mismatch)
+[2026-02-08 23:21:39] Login successful for: worker
+[2026-02-08 23:21:39] Home access: user=worker, role=migrant_worker
+[2026-02-08 23:21:51] Login successful for: admin
+[2026-02-08 23:21:51] Home access: user=admin, role=admin
+[2026-02-08 23:24:06] Login successful for: admin
+[2026-02-08 23:24:06] Home access: user=admin, role=admin
+[2026-02-08 23:39:03] Login successful for: worker
+[2026-02-08 23:39:03] Home access: user=worker, role=migrant_worker
+[2026-02-08 23:39:12] Login successful for: admin
+[2026-02-08 23:39:12] Home access: user=admin, role=admin
+[2026-02-08 23:40:21] Login failed for: patient102 (Password mismatch)
+[2026-02-08 23:41:12] Login failed for: patient102 (Password mismatch)
+[2026-02-08 23:52:39] Login successful for: patient102
+[2026-02-08 23:52:39] Home access: user=patient102, role=patient
+[2026-02-08 23:52:39] Login successful for: worker3
+[2026-02-08 23:52:39] Home access: user=worker3, role=migrant_worker
+[2026-02-08 23:54:31] Login failed for: patient102 (Password mismatch)
+[2026-02-08 23:54:32] Login successful for: worker
+[2026-02-08 23:54:32] Home access: user=worker, role=migrant_worker
+[2026-02-08 23:54:46] Login failed for: patient102 (Password mismatch)
+[2026-02-08 23:55:14] Login failed for: patient102 (Password mismatch)
+[2026-02-08 23:55:35] Login failed for: patient103 (Password mismatch)
+[2026-02-08 23:55:38] Login successful for: worker
+[2026-02-08 23:55:38] Home access: user=worker, role=migrant_worker
+[2026-02-09 00:03:16] Login successful for: admin
+[2026-02-09 00:03:16] Home access: user=admin, role=admin
+[2026-02-09 00:03:58] Login failed for: patient102 (Password mismatch)
+[2026-02-09 00:04:08] Login failed for: patient102 (Password mismatch)
+[2026-02-09 00:04:09] Login failed for: patient102 (Password mismatch)
+[2026-02-09 00:04:10] Login failed for: patient102 (Password mismatch)
+[2026-02-09 00:04:10] Login failed for: patient102 (Password mismatch)
+[2026-02-09 00:04:10] Login failed for: patient102 (Password mismatch)
+[2026-02-09 00:04:11] Login failed for: patient102 (Password mismatch)
+[2026-02-09 00:04:21] Login successful for: admin
+[2026-02-09 00:04:21] Home access: user=admin, role=admin
+[2026-02-09 00:05:59] Login successful for: patient2
+[2026-02-09 00:05:59] Home access: user=patient2, role=patient
+[2026-02-09 00:06:10] Login successful for: patient2
+[2026-02-09 00:06:10] Home access: user=patient2, role=patient
+[2026-02-09 00:06:13] Login failed for: patient102 (User not found)
+[2026-02-09 00:06:27] Login successful for: patient2
+[2026-02-09 00:06:27] Home access: user=patient2, role=patient
+[2026-02-09 00:06:50] Login successful for: worker
+[2026-02-09 00:06:50] Home access: user=worker, role=migrant_worker
+[2026-02-09 00:41:12] Login successful for: worker
+[2026-02-09 00:41:12] Home access: user=worker, role=migrant_worker
+[2026-02-09 10:18:57] Login successful for: admin
+[2026-02-09 10:18:57] Home access: user=admin, role=admin
+[2026-02-09 10:19:34] Login successful for: patient
+[2026-02-09 10:19:34] Home access: user=patient, role=patient
+[2026-02-09 10:20:08] Login successful for: worker
+[2026-02-09 10:20:08] Home access: user=worker, role=migrant_worker
+[2026-02-09 10:20:50] Login successful for: caregiver
+[2026-02-09 10:20:51] Home access: user=caregiver, role=caregiver
+[2026-02-09 10:22:12] Login failed for: patient203 (User not found)
+[2026-02-09 10:22:57] Login successful for: patient2
+[2026-02-09 10:22:57] Home access: user=patient2, role=patient
+[2026-02-09 10:42:05] Login successful for: patient
+[2026-02-09 10:42:05] Home access: user=patient, role=patient
+[2026-02-09 10:43:44] Login successful for: admin
+[2026-02-09 10:43:44] Home access: user=admin, role=admin
+[2026-02-09 13:19:07] Login successful for: admin
+[2026-02-09 13:19:07] Home access: user=admin, role=admin
+[2026-02-09 13:20:23] Login successful for: patient2
+[2026-02-09 13:20:23] Home access: user=patient2, role=patient
+[2026-02-09 13:20:24] Login successful for: patient2
+[2026-02-09 13:20:26] Login successful for: patient2
+[2026-02-09 13:20:27] Login successful for: patient2
+[2026-02-09 13:20:27] Login successful for: patient2
+[2026-02-09 13:20:27] Login successful for: patient2
+[2026-02-09 13:20:27] Login successful for: patient2
+[2026-02-09 13:20:27] Login successful for: patient2
+[2026-02-09 13:20:27] Login successful for: patient2
+[2026-02-09 13:20:27] Login successful for: patient2
+[2026-02-09 13:20:27] Home access: user=patient2, role=patient
+[2026-02-09 13:21:26] Login successful for: admin
+[2026-02-09 13:21:26] Home access: user=admin, role=admin

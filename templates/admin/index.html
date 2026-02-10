@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Healink</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        .admin-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .admin-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 1.5rem;
+            height: fit-content;
+        }
+
+        .admin-card h2 {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .nav-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .nav-card {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            padding: 1.25rem;
+            border-radius: 20px;
+            text-decoration: none;
+            color: white;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .nav-card:hover {
+            background: rgba(99, 102, 241, 0.2);
+            transform: translateY(-3px);
+        }
+
+        .nav-card h3 {
+            font-size: 1rem;
+        }
+
+        .nav-card span {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        .sos-item {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            padding: 1rem;
+            border-radius: 15px;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .admin-form {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .admin-form label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: -0.5rem;
+        }
+
+        .admin-form input,
+        .admin-form select,
+        .admin-form textarea {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            padding: 0.75rem;
+            border-radius: 10px;
+            color: white;
+            outline: none;
+            font-size: 0.9rem;
+        }
+
+        .btn-submit {
+            background: var(--accent-primary);
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+
+        .btn-submit:hover {
+            opacity: 0.9;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+        }
+
+        .admin-table th,
+        .admin-table td {
+            text-align: left;
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .admin-table th {
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 5px;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+        }
+
+        .badge-admin {
+            background: #ef4444;
+        }
+
+        .badge-home_nurse {
+            background: #6366f1;
+        }
+
+        .badge-patient {
+            background: #10b981;
+        }
+
+        .badge-caregiver {
+            background: #ec4899;
+        }
+
+        .badge-migrant_worker {
+            background: #f59e0b;
+        }
+
+        .monitoring-section {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-container">
+                <div class="logo-icon">H</div>
+                <h1>Admin Dashboard</h1>
+            </div>
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <span class="status-badge">
+                    <div class="status-dot"></div>
+                    System Online
+                </span>
+                <a href="{{ url_for('logout') }}"
+                    style="color: var(--text-secondary); text-decoration: none; font-size: 0.875rem;">Logout</a>
+            </div>
+        </header>
+
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        {% for message in messages %}
+        <div
+            style="background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; padding: 1rem; border-radius: 10px; margin-bottom: 1rem;">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <div class="nav-links">
+            <a href="{{ url_for('admin.patients_list') }}" class="nav-card">
+                <h3>Patients</h3>
+                <span>{{ patients|length }} Registered</span>
+            </a>
+            <a href="{{ url_for('admin.caregivers') }}" class="nav-card">
+                <h3>Caregivers</h3>
+                <span>Staff Management</span>
+            </a>
+            <a href="{{ url_for('admin.migrant_workers') }}" class="nav-card">
+                <h3>Migrant Workers</h3>
+                <span>Field Operations</span>
+            </a>
+            <a href="#users" class="nav-card"
+                style="background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);">
+                <h3>Users List</h3>
+                <span>{{ all_users|length }} Total Users</span>
+            </a>
+        </div>
+
+        {% if active_sos %}
+        <div class="admin-card" style="margin-bottom: 2rem; border-color: #ef4444;">
+            <h2 style="color: #ef4444;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2">
+                    <path
+                        d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0zM12 9v4m0 4h.01" />
+                </svg> Emergency Alerts</h2>
+            {% for sos in active_sos %}
+            <div class="sos-item">
+                <div>
+                    <strong>{{ sos.full_name }}</strong>
+                    <div style="font-size: 0.8rem; color: var(--text-secondary);">{{ sos.timestamp }}</div>
+                </div>
+                <form action="{{ url_for('admin.action') }}" method="POST">
+                    <input type="hidden" name="action" value="dismiss_sos">
+                    <input type="hidden" name="sos_id" value="{{ sos.id }}">
+                    <button type="submit" class="btn-submit" style="background: #ef4444; font-size: 0.8rem;">Dismiss
+                        Alert</button>
+                </form>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if view_user_id %}
+        <div class="monitoring-section">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem;">
+                <div>
+                    <h2 style="font-size: 1.5rem; margin-bottom: 0.5rem;">Patient Monitoring</h2>
+                    <p style="color: var(--text-secondary);">Currently viewing real-time data for Patient ID: <strong>{{
+                            view_user_id }}</strong></p>
+                </div>
+                <a href="{{ url_for('admin.index') }}"
+                    style="color: var(--text-secondary); text-decoration: none; border: 1px solid var(--glass-border); padding: 0.5rem 1rem; border-radius: 10px; font-size: 0.8rem;">Close
+                    Monitor</a>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">Heart Rate</span>
+                        <svg class="stat-icon pulse-animation" viewBox="0 0 24 24" fill="none" stroke="#ef4444"
+                            stroke-width="2">
+                            <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+                        </svg>
+                    </div>
+                    <div class="stat-value" id="hr-value">--</div>
+                    <div class="stat-unit">BPM</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">Oxygen</span>
+                        <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2">
+                            <path d="M12 2v20m-7-7l7 7 7-7" />
+                        </svg>
+                    </div>
+                    <div class="stat-value" id="ox-value">--</div>
+                    <div class="stat-unit">% SpO2</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">Temperature</span>
+                        <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2">
+                            <path d="M14 4v10.54a4 4 0 11-4 0V4a2 2 0 014 0z" />
+                        </svg>
+                    </div>
+                    <div class="stat-value" id="temp-value">--</div>
+                    <div class="stat-unit">°C</div>
+                </div>
+            </div>
+
+            <div class="admin-grid" style="margin-top: 2rem;">
+                <!-- Clinical Info Display -->
+                <div class="admin-card">
+                    <h2>Clinical Information</h2>
+                    {% if clinical_info %}
+                    <div style="display: flex; flex-direction: column; gap: 1rem; font-size: 0.9rem;">
+                        <div>
+                            <div style="color: var(--text-secondary); font-size: 0.75rem;">Diseases</div>
+                            <div>{{ clinical_info.diseases or 'N/A' }}</div>
+                        </div>
+                        <div>
+                            <div style="color: var(--text-secondary); font-size: 0.75rem;">Assigned Doctors</div>
+                            <div>{{ clinical_info.doctors or 'N/A' }}</div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <p style="color: var(--text-secondary); font-size: 0.85rem;">No clinical records found for this
+                        patient.</p>
+                    {% endif %}
+                </div>
+
+                <!-- Add Medication Alert -->
+                <div class="admin-card">
+                    <h2>Add Medication Alert</h2>
+                    <form action="{{ url_for('admin.action') }}" method="POST" class="admin-form">
+                        <input type="hidden" name="action" value="add_med">
+                        <input type="hidden" name="patient_id" value="{{ view_user_id }}">
+                        <input type="text" name="med_name" placeholder="Medication Name" required>
+                        <input type="text" name="dosage" placeholder="Dosage (e.g. 500mg)" required>
+                        <input type="time" name="time" required>
+                        <button type="submit" class="btn-submit">Add Alert</button>
+                    </form>
+
+                    <h3 style="margin-top: 1.5rem; font-size: 0.9rem; color: var(--text-secondary);">Scheduled Meds</h3>
+                    <table class="admin-table">
+                        <tbody>
+                            {% for med in medication_alerts %}
+                            <tr>
+                                <td>{{ med.med_name }}</td>
+                                <td>{{ med.time }}</td>
+                                <td>{% if med.taken %}<span style="color: #10b981;">Taken</span>{% else %}<span
+                                        style="color: #f59e0b;">Pending</span>{% endif %}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <script>
+                const eventSource = new EventSource(`/api/stream?user_id={{ view_user_id }}`);
+                eventSource.onmessage = function (e) {
+                    const data = JSON.parse(e.data);
+                    document.getElementById('hr-value').innerText = data.heart_rate || '--';
+                    document.getElementById('ox-value').innerText = data.oxygen_level || '--';
+                    document.getElementById('temp-value').innerText = data.temperature || '--';
+                };
+            </script>
+        </div>
+        {% endif %}
+
+        <div class="admin-grid">
+            <!-- Add User Section -->
+            <div class="admin-card">
+                <h2>Add New User</h2>
+                <form action="{{ url_for('admin.action') }}" method="POST" class="admin-form">
+                    <input type="hidden" name="action" value="add_user">
+                    <label>Full Name</label>
+                    <input type="text" name="full_name" placeholder="John Doe" required>
+                    <label>Username</label>
+                    <input type="text" name="username" placeholder="johndoe" required>
+                    <label>Initial Password</label>
+                    <input type="password" name="password" placeholder="••••••••" required>
+                    <label>Assign Role</label>
+                    <select name="role" required>
+                        <option value="patient">Patient</option>
+                        <option value="home_nurse">Home Nurse</option>
+                        <option value="caregiver">Caregiver</option>
+                        <option value="migrant_worker">Migrant Worker</option>
+                        <option value="admin">Administrator</option>
+                    </select>
+                    <button type="submit" class="btn-submit">Register User</button>
+                </form>
+            </div>
+
+            <!-- Associations Section -->
+            <div class="admin-card">
+                <h2>Assign Monitor to Patient</h2>
+                <form action="{{ url_for('admin.action') }}" method="POST" class="admin-form">
+                    <input type="hidden" name="action" value="add_association">
+                    <label>Patient</label>
+                    <select name="patient_id" required>
+                        <option value="">Select Patient...</option>
+                        {% for p in patients %}
+                        <option value="{{ p.id }}">{{ p.full_name }}</option>
+                        {% endfor %}
+                    </select>
+                    <label>Monitor (Medical Staff)</label>
+                    <select name="monitor_id" required>
+                        <option value="">Select Staff Member...</option>
+                        {% for m in monitors %}
+                        <option value="{{ m.id }}">{{ m.full_name }} ({{ m.role|replace('_', ' ')|title }})</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="btn-submit">Create Association</button>
+                    <p style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.5rem;">
+                        Monitors can view patient health data and leave clinical notes.
+                    </p>
+                </form>
+            </div>
+
+            <!-- Hospital Section -->
+            <div class="admin-card">
+                <h2>Partner Hospitals</h2>
+                <div style="max-height: 200px; overflow-y: auto; margin-bottom: 1rem;">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Contact</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for h in hospitals %}
+                            <tr>
+                                <td>{{ h.name }}</td>
+                                <td>{{ h.contact_person }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <hr style="border: none; border-top: 1px solid var(--glass-border); margin: 1rem 0;">
+                <h3 style="font-size: 0.9rem; margin-bottom: 0.5rem;">Add Hospital</h3>
+                <form action="{{ url_for('admin.action') }}" method="POST" class="admin-form">
+                    <input type="hidden" name="action" value="add_hospital">
+                    <input type="text" name="h_name" placeholder="Hospital Name" required>
+                    <input type="text" name="h_address" placeholder="Location">
+                    <input type="text" name="h_contact" placeholder="Contact Person">
+                    <input type="email" name="h_email" placeholder="Email Address">
+                    <button type="submit" class="btn-submit">Add Partner</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="users" class="admin-card" style="margin-top: 2rem;">
+            <h2>User Management</h2>
+            <div style="overflow-x: auto;">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Full Name</th>
+                            <th>Username</th>
+                            <th>Role</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in all_users %}
+                        <tr>
+                            <td>#{{ user.id }}</td>
+                            <td>{{ user.full_name }}</td>
+                            <td><code>{{ user.username }}</code></td>
+                            <td><span class="badge badge-{{ user.role }}">{{ user.role|replace('_', ' ') }}</span></td>
+                            <td>
+                                {% if user.role != 'admin' %}
+                                <form action="{{ url_for('admin.action') }}" method="POST" style="display: inline;"
+                                    onsubmit="return confirm('Really delete user {{ user.username }}?');">
+                                    <input type="hidden" name="action" value="delete_user">
+                                    <input type="hidden" name="id" value="{{ user.id }}">
+                                    <button type="submit"
+                                        style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 0.8rem;">Delete</button>
+                                </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

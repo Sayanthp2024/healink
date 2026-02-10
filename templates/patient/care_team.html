@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Care Team | Healink</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        .care-team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .member-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2rem;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .member-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .member-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #6366f1, #ec4899);
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-container">
+                <h1>My Care Team</h1>
+            </div>
+            <a href="{{ url_for('patient_dashboard') }}" class="btn-back">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7" />
+                </svg>
+                Back to Dashboard
+            </a>
+        </header>
+
+        {% if not care_team %}
+        <div
+            style="text-align: center; padding: 5rem; background: var(--card-bg); border-radius: 20px; border: 1px solid var(--glass-border); margin-top: 2rem;">
+            <p style="color: var(--text-secondary);">No care team members assigned yet.</p>
+        </div>
+        {% else %}
+        <div class="care-team-grid">
+            {% for member in care_team %}
+            <div class="member-card">
+                <div class="member-avatar">{{ member.full_name[0]|upper }}</div>
+                <div style="font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem;">{{ member.full_name }}</div>
+                <div
+                    style="color: var(--text-secondary); font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1.5rem;">
+                    {{ member.role|replace('_', ' ')|title }}
+                </div>
+                <div
+                    style="font-size: 0.8rem; color: var(--text-secondary); background: rgba(255,255,255,0.05); padding: 0.5rem 1rem; border-radius: 8px;">
+                    Authorized Monitor
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</body>
+
+</html>
