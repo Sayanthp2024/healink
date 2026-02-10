@@ -1,0 +1,19 @@
+[2026-02-08 16:04:05] Login successful for: admin
+[2026-02-08 16:04:31] Login successful for: admin
+[2026-02-08 16:08:22] Login successful for: admin
+[2026-02-08 16:21:35] Login successful for: patient
+[2026-02-08 16:22:07] Login successful for: worker
+[2026-02-08 16:23:03] Login successful for: admin
+[2026-02-08 16:46:02] Login failed for: patient102 (Password mismatch)
+[2026-02-08 16:46:25] Login failed for: patient102 (Password mismatch)
+[2026-02-08 16:46:50] Login failed for: patient102 (Password mismatch)
+[2026-02-08 16:46:53] Login failed for: patient102 (Password mismatch)
+[2026-02-08 16:47:20] Login failed for: patient103 (Password mismatch)
+[2026-02-08 16:47:31] Login successful for: nurse
+[2026-02-08 16:47:31] Home access: user=nurse, role=home_nurse
+[2026-02-08 16:48:05] Login successful for: caregiver
+[2026-02-08 16:48:05] Home access: user=caregiver, role=caregiver
+[2026-02-08 16:48:06] Login successful for: caregiver
+[2026-02-08 16:48:06] Home access: user=caregiver, role=caregiver
+[2026-02-08 16:48:28] Login successful for: worker
+[2026-02-08 16:48:28] Home access: user=worker, role=migrant_worker

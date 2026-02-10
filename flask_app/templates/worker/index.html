@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worker Dashboard | Healink</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-container">
+                <h1>Healink Worker</h1>
+            </div>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <select onchange="window.location.href='{{ url_for('worker_dashboard') }}?user_id=' + this.value"
+                    style="background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: white; border-radius: 4px; padding: 4px; font-size: 0.8rem;">
+                    <option value="">Select Patient</option>
+                    {% for p in assigned_patients %}
+                    <option value="{{ p.id }}" {{ 'selected' if view_user_id|string==p.id|string else '' }}>{{
+                        p.full_name }}</option>
+                    {% endfor %}
+                </select>
+                <a href="{{ url_for('logout') }}"
+                    style="color: var(--text-secondary); text-decoration: none; font-size: 0.8rem; padding: 0.5rem; border: 1px solid var(--glass-border); border-radius: 8px;">Logout</a>
+            </div>
+        </header>
+
+        {% if view_user_id %}
+        <div class="dashboard-grid">
+            <div class="stat-card">
+                <div class="stat-header"><span class="stat-label">Heart Rate</span></div>
+                <div class="stat-value"><span id="hr-val">--</span> <span class="stat-unit">BPM</span></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header"><span class="stat-label">Blood Sugar</span></div>
+                <div class="stat-value"><span id="sugar-val">--</span> <span class="stat-unit">mg/dL</span></div>
+            </div>
+
+            <div class="chart-container" style="grid-column: span 2;">
+                <canvas id="healthChart" height="150"></canvas>
+            </div>
+
+            <div class="chart-container" style="padding: 1.5rem;">
+                <div class="chart-header">
+                    <h3>Daily Note</h3>
+                </div>
+                <form method="POST" style="margin-top: 1rem;">
+                    <input type="hidden" name="action" value="add_note">
+                    <input type="hidden" name="patient_id" value="{{ view_user_id }}">
+                    <textarea name="note"
+                        style="width: 100%; height: 80px; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); border-radius: 8px; padding: 0.75rem; color: white; margin-bottom: 0.5rem;"
+                        placeholder="Observations..."></textarea>
+                    <button type="submit" class="btn-submit"
+                        style="width: 100%; height: 40px; border: none; border-radius: 8px; background: linear-gradient(135deg, #6366f1, #a855f7); color: white; cursor: pointer;">Save
+                        Daily Log</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="admin-section"
+            style="margin-top: 2rem; background: var(--card-bg); border: 1px solid var(--glass-border); border-radius: 20px; padding: 1.5rem;">
+            <h3>Past Logs</h3>
+            <div id="notes-list" style="margin-top: 1rem;">
+                {% for n in observation_history %}
+                <div
+                    style="background: rgba(255,255,255,0.02); border-left: 3px solid #6366f1; padding: 0.75rem; margin-bottom: 0.75rem; border-radius: 4px;">
+                    <div style="font-size: 0.85rem; color: #f1f5f9;">{{ n.note }}</div>
+                    <div style="font-size: 0.7rem; color: var(--text-secondary); margin-top: 0.25rem;">{{ n.timestamp }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <script>
+            window.history_api_url = "{{ url_for('api.get_history') }}";
+            window.stream_api_url = "{{ url_for('api.stream_data') }}";
+            window.current_user_id = {{ view_user_id |default ('null') }};
+        </script>
+        <script src="{{ url_for('static', filename='app.js') }}"></script>
+        {% endif %}
+    </div>
+</body>
+
+</html>
