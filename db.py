@@ -124,6 +124,19 @@ def init_db():
             cursor.execute("INSERT INTO users (username, password, role, full_name) VALUES (?, ?, ?, ?)", 
                          (username, pwd_hash, role, full_name))
 
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS doctor_reminders (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
+            doctor_name TEXT,
+            consultation_type TEXT,
+            date TEXT,
+            time TEXT,
+            status TEXT DEFAULT 'pending',
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        )
+    ''')
+
     # Universal Migration: Fix legacy hashes for users added via older systems (e.g. PHP)
     all_users = cursor.execute("SELECT id, username, password, role FROM users").fetchall()
     

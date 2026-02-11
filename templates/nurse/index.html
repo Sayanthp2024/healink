@@ -60,6 +60,23 @@
                 <canvas id="healthChart" height="150"></canvas>
             </div>
 
+            <!-- Clinical Alerts Panel -->
+            <div class="chart-container" style="padding: 1.5rem; border-color: rgba(245, 158, 11, 0.3);">
+                <div class="chart-header">
+                    <h3 style="color: #f59e0b; display: flex; align-items: center; gap: 0.5rem;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path
+                                d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0zM12 9v4m0 4h.01" />
+                        </svg>
+                        Clinical Alerts
+                    </h3>
+                </div>
+                <div id="clinical-alerts-list" style="margin-top: 1rem;">
+                    <div style="color: var(--text-secondary); font-size: 0.8rem;">Connecting to stream...</div>
+                </div>
+            </div>
+
             <div class="chart-container" style="padding: 1.5rem;">
                 <div class="chart-header">
                     <h3>Medication Alerts</h3>
@@ -78,6 +95,72 @@
                     </div>
                     {% endfor %}
                 </div>
+            </div>
+
+            <!-- Medication Reminder Form -->
+            <div class="chart-container" style="padding: 1.5rem;">
+                <div class="chart-header">
+                    <h3>Add Medication Reminder</h3>
+                </div>
+                <form method="POST" style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.75rem;">
+                    <input type="hidden" name="action" value="add_med">
+                    <input type="hidden" name="patient_id" value="{{ view_user_id }}">
+                    <input type="text" name="med_name" placeholder="Medication Name" required
+                        style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); border-radius: 8px; padding: 0.5rem; color: white;">
+                    <input type="text" name="dosage" placeholder="Dosage (e.g. 500mg)" required
+                        style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); border-radius: 8px; padding: 0.5rem; color: white;">
+                    <input type="time" name="time" required
+                        style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); border-radius: 8px; padding: 0.5rem; color: white;">
+                    <button type="submit"
+                        style="width: 100%; height: 40px; border: none; border-radius: 8px; background: #6366f1; color: white; cursor: pointer; font-weight: 600;">Add
+                        Reminder</button>
+                </form>
+            </div>
+
+            <div class="chart-container" style="padding: 1.5rem;">
+                <div class="chart-header">
+                    <h3>Doctor Consultations</h3>
+                </div>
+                <div id="doc-reminders-list" style="margin-top: 1rem;">
+                    {% for d in doctor_reminders %}
+                    <div
+                        style="background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 12px; padding: 0.75rem; margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-weight: 600; font-size: 0.85rem;">{{ d.doctor_name }}</div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary);">{{ d.consultation_type }} •
+                                {{ d.date }}
+                            </div>
+                        </div>
+                        <span
+                            style="color: #6366f1; font-size: 0.65rem; border: 1px solid #6366f1; padding: 2px 6px; border-radius: 4px;">{{
+                            d.status|capitalize }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Doctor Consultation Form -->
+            <div class="chart-container" style="padding: 1.5rem;">
+                <div class="chart-header">
+                    <h3>Add Doctor Consultation</h3>
+                </div>
+                <form method="POST" style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.75rem;">
+                    <input type="hidden" name="action" value="add_doctor_reminder">
+                    <input type="hidden" name="patient_id" value="{{ view_user_id }}">
+                    <input type="text" name="doctor_name" placeholder="Doctor Name" required
+                        style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); border-radius: 8px; padding: 0.5rem; color: white;">
+                    <input type="text" name="consultation_type" placeholder="Type (e.g. Follow-up)" required
+                        style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); border-radius: 8px; padding: 0.5rem; color: white;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                        <input type="date" name="date" required
+                            style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); border-radius: 8px; padding: 0.5rem; color: white;">
+                        <input type="time" name="time" required
+                            style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); border-radius: 8px; padding: 0.5rem; color: white;">
+                    </div>
+                    <button type="submit"
+                        style="width: 100%; height: 40px; border: none; border-radius: 8px; background: #6366f1; color: white; cursor: pointer; font-weight: 600;">Schedule
+                        Consultation</button>
+                </form>
             </div>
 
             <!-- Clinical Information -->
@@ -141,6 +224,55 @@
                             style="background: #6366f1; border: none; color: white; padding: 0.5rem 1.5rem; border-radius: 8px; cursor: pointer;">Save
                             Changes</button>
                     </div>
+                </form>
+            </div>
+
+            <!-- Record Vitals Form -->
+            <div class="chart-container" style="padding: 1.5rem;">
+                <div class="chart-header">
+                    <h3>Record Vital Signs</h3>
+                </div>
+                <form method="POST" style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.75rem;">
+                    <input type="hidden" name="action" value="add_vitals">
+                    <input type="hidden" name="patient_id" value="{{ view_user_id }}">
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                        <div>
+                            <label style="font-size: 0.7rem; color: var(--text-secondary);">Heart Rate (BPM)</label>
+                            <input type="number" name="heart_rate" required placeholder="72"
+                                style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); border-radius: 8px; padding: 0.5rem; color: white;">
+                        </div>
+                        <div>
+                            <label style="font-size: 0.7rem; color: var(--text-secondary);">SpO2 (%)</label>
+                            <input type="number" name="oxygen_level" required placeholder="98"
+                                style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); border-radius: 8px; padding: 0.5rem; color: white;">
+                        </div>
+                        <div>
+                            <label style="font-size: 0.7rem; color: var(--text-secondary);">BP - Systolic (mmHg)</label>
+                            <input type="number" name="blood_pressure_sys" required placeholder="120"
+                                style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); border-radius: 8px; padding: 0.5rem; color: white;">
+                        </div>
+                        <div>
+                            <label style="font-size: 0.7rem; color: var(--text-secondary);">BP - Diastolic
+                                (mmHg)</label>
+                            <input type="number" name="blood_pressure_dia" required placeholder="80"
+                                style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); border-radius: 8px; padding: 0.5rem; color: white;">
+                        </div>
+                        <div>
+                            <label style="font-size: 0.7rem; color: var(--text-secondary);">Temperature (°C)</label>
+                            <input type="number" step="0.1" name="temperature" required placeholder="36.6"
+                                style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); border-radius: 8px; padding: 0.5rem; color: white;">
+                        </div>
+                        <div>
+                            <label style="font-size: 0.7rem; color: var(--text-secondary);">Blood Sugar (mg/dL)</label>
+                            <input type="number" step="0.1" name="sugar_level" required placeholder="100"
+                                style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); border-radius: 8px; padding: 0.5rem; color: white;">
+                        </div>
+                    </div>
+
+                    <button type="submit"
+                        style="width: 100%; height: 40px; border: none; border-radius: 8px; background: #10b981; color: white; cursor: pointer; font-weight: 600;">Save
+                        Vitals</button>
                 </form>
             </div>
 

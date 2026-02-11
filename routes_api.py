@@ -50,13 +50,48 @@ def get_history():
     
     return jsonify([dict(row) for row in reversed(history)])
 
+def get_clinical_alerts(user_id, vitals):
+    alerts = []
+    
+    # Standard Thresholds
+    hr = vitals.get('heart_rate', 0)
+    spo2 = vitals.get('oxygen_level', 0)
+    temp = vitals.get('temperature', 0)
+    sys = vitals.get('blood_pressure_sys', 0)
+    dia = vitals.get('blood_pressure_dia', 0)
+    sugar = vitals.get('sugar_level', 0)
+
+    if hr > 100: alerts.append({'type': 'danger', 'msg': 'High Heart Rate (Tachycardia)'})
+    if hr < 60 and hr > 0: alerts.append({'type': 'warning', 'msg': 'Low Heart Rate (Bradycardia)'})
+    if spo2 < 95 and spo2 > 0: alerts.append({'type': 'danger', 'msg': 'Low Oxygen Level (Hypoxia risk)'})
+    if temp > 38: alerts.append({'type': 'danger', 'msg': 'High Fever'})
+    if sys > 140 or dia > 90: alerts.append({'type': 'warning', 'msg': 'High Blood Pressure (Hypertension)'})
+
+    # Medication-aware checks
+    conn = get_db_connection()
+    clinical = conn.execute("SELECT medications FROM patient_clinical_info WHERE patient_id = ?", (user_id,)).fetchone()
+    conn.close()
+
+    if clinical and clinical['medications']:
+        meds = clinical['medications'].lower()
+        # Diabetes Check
+        if any(x in meds for x in ['insulin', 'metformin', 'glyburide']):
+            if sugar > 180: alerts.append({'type': 'danger', 'msg': 'Critically High Sugar (Diabetes Context)'})
+            elif sugar < 70 and sugar > 0: alerts.append({'type': 'danger', 'msg': 'Low Blood Sugar (Hypoglycemia risk)'})
+        
+        # Hypertension Meds Context
+        if any(x in meds for x in ['amlodipine', 'lisinopril', 'losartan']):
+            if sys > 130 or dia > 85: alerts.append({'type': 'warning', 'msg': 'Elevated BP despite hypertension meds'})
+
+    return alerts
+
 @api_bp.route('/stream')
 def stream_data():
     user_id = request.args.get('user_id') or session.get('user_id')
     if not user_id:
         return Response(status=401)
 
-    # Security check: Porting association check from stream.php
+    # Security check
     if int(user_id) != session.get('user_id') and session.get('role') != 'admin':
         conn = get_db_connection()
         assoc = conn.execute('SELECT 1 FROM user_associations WHERE monitor_id = ? AND patient_id = ?', (session.get('user_id'), user_id)).fetchone()
@@ -72,7 +107,9 @@ def stream_data():
                 data = conn.execute('SELECT * FROM health_data WHERE id > ? AND user_id = ? ORDER BY id DESC LIMIT 1', (last_id, user_id)).fetchone()
                 if data:
                     last_id = data['id']
-                    yield f"data: {json.dumps(dict(data))}\n\n"
+                    vitals = dict(data)
+                    vitals['alerts'] = get_clinical_alerts(user_id, vitals)
+                    yield f"data: {json.dumps(vitals)}\n\n"
             finally:
                 conn.close()
             time.sleep(1)

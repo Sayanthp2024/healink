@@ -77,8 +77,40 @@ document.addEventListener('DOMContentLoaded', () => {
                 healthChart.update();
             }
 
-            // Simple Emergency Check
-            if (data.heart_rate > 150 || data.heart_rate < 40) {
+            // Clinical Alerts System
+            const alertContainer = document.getElementById('clinical-alerts-list');
+            if (alertContainer && data.alerts) {
+                alertContainer.innerHTML = '';
+                if (data.alerts.length === 0) {
+                    alertContainer.innerHTML = '<div style="color: var(--text-secondary); font-size: 0.8rem;">No active alerts.</div>';
+                } else {
+                    data.alerts.forEach(alert => {
+                        const alertEl = document.createElement('div');
+                        alertEl.style.cssText = `
+                            background: ${alert.type === 'danger' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(245, 158, 11, 0.1)'};
+                            border: 1px solid ${alert.type === 'danger' ? '#ef4444' : '#f59e0b'};
+                            color: ${alert.type === 'danger' ? '#fca5a5' : '#fcd34d'};
+                            padding: 0.75rem;
+                            border-radius: 8px;
+                            margin-bottom: 0.5rem;
+                            font-size: 0.8rem;
+                            font-weight: 600;
+                            display: flex;
+                            align-items: center;
+                            gap: 0.5rem;
+                        `;
+                        alertEl.innerHTML = `
+                            <div style="width: 8px; height: 8px; border-radius: 50%; background: currentColor;"></div>
+                            ${alert.msg}
+                        `;
+                        alertContainer.appendChild(alertEl);
+                    });
+                }
+            }
+
+            // Emergency Overlay
+            const isEmergency = data.alerts && data.alerts.some(a => a.type === 'danger');
+            if (isEmergency) {
                 document.getElementById('emergency-overlay') ? document.getElementById('emergency-overlay').style.display = 'block' : null;
             } else {
                 document.getElementById('emergency-overlay') ? document.getElementById('emergency-overlay').style.display = 'none' : null;

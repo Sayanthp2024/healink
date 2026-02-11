@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relationship Dashboard | Healink</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        .admin-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .admin-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 1.5rem;
+            height: fit-content;
+        }
+
+        .admin-card h2 {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .admin-form {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .admin-form label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: -0.5rem;
+        }
+
+        .admin-form select {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            padding: 0.75rem;
+            border-radius: 10px;
+            color: white;
+            outline: none;
+            font-size: 0.9rem;
+        }
+
+        .btn-submit {
+            background: var(--accent-primary);
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+
+        .btn-submit:hover {
+            opacity: 0.9;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+        }
+
+        .admin-table th,
+        .admin-table td {
+            text-align: left;
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .admin-table th {
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 5px;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+        }
+
+        .badge-home_nurse {
+            background: #6366f1;
+        }
+
+        .badge-caregiver {
+            background: #ec4899;
+        }
+
+        .badge-migrant_worker {
+            background: #f59e0b;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-container">
+                <div class="logo-icon">H</div>
+                <div style="display: flex; flex-direction: column;">
+                    <h1>Relationship Dashboard</h1>
+                    <a href="{{ url_for('admin.index') }}"
+                        style="color: var(--text-secondary); text-decoration: none; font-size: 0.8rem;">&larr; Back to
+                        Admin Home</a>
+                </div>
+            </div>
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <span class="status-badge">
+                    <div class="status-dot"></div>
+                    System Online
+                </span>
+                <a href="{{ url_for('logout') }}"
+                    style="color: var(--text-secondary); text-decoration: none; font-size: 0.875rem;">Logout</a>
+            </div>
+        </header>
+
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        {% for message in messages %}
+        <div
+            style="background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; padding: 1rem; border-radius: 10px; margin-bottom: 1rem;">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <div class="admin-grid">
+            <!-- Add Association Section -->
+            <div class="admin-card">
+                <h2>Assign Monitor to Patient</h2>
+                <form action="{{ url_for('admin.action') }}" method="POST" class="admin-form">
+                    <input type="hidden" name="action" value="add_association">
+                    <label>Patient</label>
+                    <select name="patient_id" required>
+                        <option value="">Select Patient...</option>
+                        {% for p in patients %}
+                        <option value="{{ p.id }}">{{ p.full_name }}</option>
+                        {% endfor %}
+                    </select>
+                    <label>Monitor (Medical Staff)</label>
+                    <select name="monitor_id" required>
+                        <option value="">Select Staff Member...</option>
+                        {% for m in monitors %}
+                        <option value="{{ m.id }}">{{ m.full_name }} ({{ m.role|replace('_', ' ')|title }})</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="btn-submit">Create Association</button>
+                    <p style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.5rem;">
+                        Monitors can view patient health data and leave clinical notes.
+                    </p>
+                </form>
+            </div>
+
+            <!-- Existing Relationships Section -->
+            <div class="admin-card" style="grid-column: span 1.5;">
+                <h2>Current Associations</h2>
+                <div style="overflow-x: auto;">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Monitor</th>
+                                <th>Role</th>
+                                <th>Patient</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for assoc in associations %}
+                            <tr>
+                                <td><strong>{{ assoc.monitor_name }}</strong></td>
+                                <td><span class="badge badge-{{ assoc.monitor_role }}">{{
+                                        assoc.monitor_role|replace('_', ' ') }}</span></td>
+                                <td>{{ assoc.patient_name }}</td>
+                                <td>
+                                    <form action="{{ url_for('admin.action') }}" method="POST" style="display: inline;"
+                                        onsubmit="return confirm('Remove this association?');">
+                                        <input type="hidden" name="action" value="delete_association">
+                                        <input type="hidden" name="id" value="{{ assoc.id }}">
+                                        <button type="submit"
+                                            style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 0.8rem;">Remove</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            {% if not associations %}
+                            <tr>
+                                <td colspan="4"
+                                    style="text-align: center; color: var(--text-secondary); padding: 2rem;">No
+                                    associations found.</td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

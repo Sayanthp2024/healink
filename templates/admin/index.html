@@ -216,6 +216,11 @@
                 <h3>Migrant Workers</h3>
                 <span>Field Operations</span>
             </a>
+            <a href="{{ url_for('admin.relationships') }}" class="nav-card"
+                style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2);">
+                <h3>Staff-Patient Links</h3>
+                <span>Relationship Dashboard</span>
+            </a>
             <a href="#users" class="nav-card"
                 style="background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);">
                 <h3>Users List</h3>
@@ -294,7 +299,20 @@
                 </div>
             </div>
 
-            <div class="admin-grid" style="margin-top: 2rem;">
+            <!-- Real-time Clinical Alerts -->
+            <div id="clinical-alerts-panel" class="admin-card"
+                style="margin-top: 1.5rem; border-color: rgba(245, 158, 11, 0.3);">
+                <h2 style="color: #f59e0b;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <path
+                            d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0zM12 9v4m0 4h.01" />
+                    </svg> Clinical Alerts</h2>
+                <div id="clinical-alerts-list">
+                    <div style="color: var(--text-secondary); font-size: 0.85rem;">No active alerts.</div>
+                </div>
+            </div>
+
+            <div class="admin-grid" style="margin-top: 1.5rem;">
                 <!-- Clinical Info Display -->
                 <div class="admin-card">
                     <h2>Clinical Information</h2>

@@ -97,8 +97,10 @@ def admin_redirect():
 def patient_dashboard():
     conn = get_db_connection()
     meds = conn.execute('SELECT * FROM medication_alerts WHERE user_id = ? AND taken = 0 ORDER BY time ASC', (session['user_id'],)).fetchall()
+    doc_reminders = conn.execute('SELECT * FROM doctor_reminders WHERE user_id = ? AND status = "pending" ORDER BY date ASC, time ASC', (session['user_id'],)).fetchall()
+    clinical_info = conn.execute("SELECT * FROM patient_clinical_info WHERE patient_id = ?", (session['user_id'],)).fetchone()
     conn.close()
-    return render_template('patient/index.html', medication_alerts=meds)
+    return render_template('patient/index.html', medication_alerts=meds, clinical_info=clinical_info, doctor_reminders=doc_reminders)
 
 @app.route('/patient/care_team')
 @roles_required('patient')
@@ -129,6 +131,28 @@ def nurse_dashboard():
             conn.execute("INSERT OR REPLACE INTO patient_clinical_info (patient_id, diseases, doctors, medications, updated_at) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)",
                          (request.form['patient_id'], request.form['diseases'], request.form['doctors'], request.form['medications']))
             conn.commit()
+        elif action == 'add_vitals':
+            conn.execute("""
+                INSERT INTO health_data (user_id, heart_rate, blood_pressure_sys, blood_pressure_dia, oxygen_level, temperature, sugar_level)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            """, (request.form['patient_id'], 
+                  request.form['heart_rate'], 
+                  request.form['blood_pressure_sys'],
+                  request.form['blood_pressure_dia'],
+                  request.form['oxygen_level'], 
+                  request.form['temperature'], 
+                  request.form['sugar_level']))
+            conn.commit()
+        elif action == 'add_med':
+            conn.execute("INSERT INTO medication_alerts (user_id, med_name, dosage, time) VALUES (?, ?, ?, ?)", 
+                         (request.form['patient_id'], request.form['med_name'], request.form['dosage'], request.form['time']))
+            conn.commit()
+        elif action == 'add_doctor_reminder':
+            conn.execute("""
+                INSERT INTO doctor_reminders (user_id, doctor_name, consultation_type, date, time)
+                VALUES (?, ?, ?, ?, ?)
+            """, (request.form['patient_id'], request.form['doctor_name'], request.form['consultation_type'], request.form['date'], request.form['time']))
+            conn.commit()
         return redirect(url_for('nurse_dashboard', user_id=request.form['patient_id']))
 
     # Fetch assigned patients
@@ -143,10 +167,12 @@ def nurse_dashboard():
 
     clinical_info = None
     medication_alerts = []
+    doctor_reminders = []
     observation_history = []
     if view_user_id:
         clinical_info = conn.execute("SELECT * FROM patient_clinical_info WHERE patient_id = ?", (view_user_id,)).fetchone()
         medication_alerts = conn.execute("SELECT * FROM medication_alerts WHERE user_id = ? AND taken = 0 ORDER BY time ASC", (view_user_id,)).fetchall()
+        doctor_reminders = conn.execute("SELECT * FROM doctor_reminders WHERE user_id = ? AND status = 'pending' ORDER BY date ASC, time ASC", (view_user_id,)).fetchall()
         observation_history = conn.execute("""
             SELECT vn.*, u.full_name as worker_name 
             FROM visit_notes vn 
@@ -161,6 +187,7 @@ def nurse_dashboard():
                            view_user_id=view_user_id,
                            clinical_info=clinical_info,
                            medication_alerts=medication_alerts,
+                           doctor_reminders=doctor_reminders,
                            observation_history=observation_history)
 
 @app.route('/worker', methods=['GET', 'POST'])

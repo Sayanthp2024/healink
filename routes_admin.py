@@ -60,6 +60,9 @@ def action():
         elif action_type == 'delete_user':
             conn.execute("DELETE FROM users WHERE id = ?", (request.form['id'],))
             
+        elif action_type == 'delete_association':
+            conn.execute("DELETE FROM user_associations WHERE id = ?", (request.form['id'],))
+            
         elif action_type == 'add_med':
             conn.execute("INSERT INTO medication_alerts (user_id, med_name, dosage, time) VALUES (?, ?, ?, ?)", 
                          (request.form['patient_id'], request.form['med_name'], request.form['dosage'], request.form['time']))
@@ -77,7 +80,33 @@ def action():
     finally:
         conn.close()
         
-    return redirect(url_for('admin.index'))
+    return redirect(request.referrer or url_for('admin.index'))
+
+@admin_bp.route('/relationships')
+@roles_required('admin')
+def relationships():
+    conn = get_db_connection()
+    
+    # Fetch all associations with details
+    associations = conn.execute("""
+        SELECT ua.id, 
+               m.full_name as monitor_name, m.role as monitor_role,
+               p.full_name as patient_name
+        FROM user_associations ua
+        JOIN users m ON ua.monitor_id = m.id
+        JOIN users p ON ua.patient_id = p.id
+        ORDER BY m.full_name ASC
+    """).fetchall()
+    
+    # Data for the add form
+    patients = conn.execute("SELECT id, full_name FROM users WHERE role = 'patient'").fetchall()
+    monitors = conn.execute("SELECT id, full_name, role FROM users WHERE role IN ('home_nurse', 'caregiver', 'migrant_worker')").fetchall()
+    
+    conn.close()
+    return render_template('admin/relationships.html', 
+                           associations=associations,
+                           patients=patients,
+                           monitors=monitors)
 
 @admin_bp.route('/migrant_workers')
 @roles_required('admin')

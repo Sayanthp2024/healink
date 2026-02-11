@@ -27,7 +27,8 @@
     </style>
 </head>
 
-<body>
+<body data-history-api-url="{{ url_for('api.get_history') }}" data-stream-api-url="{{ url_for('api.stream_data') }}"
+    data-meds-update-url="{{ url_for('api.meds_update') }}" data-current-user-id="{{ session.user_id or 0 }}">
     <div class="container">
         <header>
             <div class="logo-container">
@@ -127,6 +128,56 @@
                     {% endfor %}
                 </div>
             </div>
+
+            <!-- Doctor Consultations -->
+            <div class="chart-container" style="padding: 1.5rem;">
+                <div class="chart-header" style="margin-bottom: 1rem;">
+                    <span class="stat-label">Doctor Consultations</span>
+                </div>
+                <div id="doc-reminders-list">
+                    {% for d in doctor_reminders %}
+                    <div
+                        style="background: rgba(99, 102, 241, 0.05); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: 12px; padding: 0.75rem; margin-bottom: 0.75rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <div style="font-weight: 600; font-size: 0.9rem; color: #a5b4fc;">{{ d.doctor_name }}
+                                </div>
+                                <div style="font-size: 0.75rem; color: var(--text-secondary);">{{ d.consultation_type }}
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 0.8rem; font-weight: 600;">{{ d.date }}</div>
+                                <div style="font-size: 0.7rem; color: var(--text-secondary);">{{ d.time }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div style="color: var(--text-secondary); font-size: 0.8rem; text-align: center; padding: 1rem;">No
+                        upcoming consultations.</div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Clinical Information -->
+            <div class="chart-container" style="padding: 1.5rem; grid-column: span 2;">
+                <div class="chart-header">
+                    <span class="stat-label">My Clinical Profile</span>
+                </div>
+                <div style="margin-top: 1rem; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
+                    <div>
+                        <div style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.25rem;">Chronic
+                            Diseases</div>
+                        <div style="font-weight: 600;">{{ clinical_info.diseases if clinical_info else 'Not recorded' }}
+                        </div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.25rem;">
+                            Consulting Doctors</div>
+                        <div style="font-weight: 600;">{{ clinical_info.doctors if clinical_info else 'Not recorded' }}
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -150,13 +201,15 @@
             }
         }
         function markTaken(id) {
-            fetch(`{{ url_for('api.meds_update') }}?id=${id}`)
+            const url = document.body.dataset.medsUpdateUrl;
+            fetch(`${url}?id=${id}`)
                 .then(() => window.location.reload());
         }
 
-        window.history_api_url = "{{ url_for('api.get_history') }}";
-        window.stream_api_url = "{{ url_for('api.stream_data') }}";
-        window.current_user_id = {{ (session.user_id or 0) | tojson }};
+        const bodyData = document.body.dataset;
+        window.history_api_url = bodyData.historyApiUrl;
+        window.stream_api_url = bodyData.streamApiUrl;
+        window.current_user_id = bodyData.currentUserId;
     </script>
     <script src="{{ url_for('static', filename='app.js') }}"></script>
 </body>
